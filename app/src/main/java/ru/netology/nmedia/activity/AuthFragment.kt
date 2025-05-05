@@ -1,6 +1,7 @@
 package ru.netology.nmedia.activity
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,12 +27,6 @@ class AuthFragment : Fragment() {
             container,
             false
         )
-
-        binding.loginButton.setOnClickListener {
-            val login = binding.login.text.toString()
-            val password = binding.password.text.toString()
-            viewModel.authenticate(login, password)
-        }
         viewModel.authResult.observe(viewLifecycleOwner) { result ->
             when (result) {
                 is AuthResult.Success -> {
@@ -43,6 +38,14 @@ class AuthFragment : Fragment() {
                     Snackbar.make(binding.root, result.message, Snackbar.LENGTH_LONG).show()
                 }
             }
+        }
+
+        binding.loginButton.setOnClickListener {
+            val login = binding.login.text.toString()
+            val pass = binding.password.text.toString()
+            Log.d("Auth", "Login attempt with login: $login and password: $pass")
+            viewModel.authenticate(login, pass)
+            Log.d("Auth", "AuthFragment после вызова viewModel.authenticate ")
         }
         return binding.root
     }

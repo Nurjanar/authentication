@@ -1,12 +1,14 @@
 package ru.netology.nmedia.repository
 
-import ru.netology.nmedia.api.PostsApi
+import android.util.Log
+import ru.netology.nmedia.api.AuthsApi
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.auth.AuthResponse
 
-class AuthRepository(private val api: PostsApi) {
+class AuthRepository {
     suspend fun authenticate(login: String, password: String): AuthResponse {
-        val response = api.service.updateUser(login, password)
+        Log.d("Auth", "Repostory после вызова authenticate ")
+        val response = AuthsApi.service.updateUser(login, password)
         if (response.isSuccessful) {
             response.body()?.let { authResponse ->
                 AppAuth.getInstance().setAuth(authResponse.id, authResponse.token)

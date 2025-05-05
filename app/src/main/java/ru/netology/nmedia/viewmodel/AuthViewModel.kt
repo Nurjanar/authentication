@@ -1,5 +1,6 @@
 package ru.netology.nmedia.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,7 +13,8 @@ import ru.netology.nmedia.auth.AuthResponse
 import ru.netology.nmedia.auth.AuthState
 import ru.netology.nmedia.repository.AuthRepository
 
-class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
+class AuthViewModel : ViewModel() {
+    private val repository = AuthRepository()
     val data: LiveData<AuthState> = AppAuth.getInstance()
         .authStateFlow
         .asLiveData(Dispatchers.Default)
@@ -22,11 +24,13 @@ class AuthViewModel(private val repository: AuthRepository) : ViewModel() {
     private val _authResult = MutableLiveData<AuthResult>()
     val authResult: LiveData<AuthResult> get() = _authResult
 
-    fun authenticate(login: String, password: String) {
+    fun authenticate(login: String, pass: String) {
+        Log.d("Auth", "Model внутри authenticate ")
         viewModelScope.launch {
             try {
-                val response = repository.authenticate(login, password)
-                _authResult.value = AuthResult.Success(response)
+                val response = repository.authenticate(login, pass)
+                Log.d("Auth", "Model repository.authenticate ")
+                _authResult.value = response.let { AuthResult.Success(it) }
             } catch (e: Exception) {
                 _authResult.value = AuthResult.Error(e.message ?: "Unknown error")
             }
